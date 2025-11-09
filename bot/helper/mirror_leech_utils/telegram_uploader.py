@@ -240,6 +240,7 @@ class TelegramUploader:
         await self._user_settings()
         res = await self._msg_to_reply()
         if not res:
+            reply_to = self._sent_msg
             return
         for dirpath, _, files in natsorted(await sync_to_async(walk, self._path)):
             if dirpath.endswith("/yt-dlp-thumb"):
@@ -249,6 +250,7 @@ class TelegramUploader:
                 await rmtree(dirpath, ignore_errors=True)
                 continue
             for file_ in natsorted(files):
+                self._sent_msg = reply_to
                 self._error = ""
                 self._up_path = f_path = ospath.join(dirpath, file_)
                 if not await aiopath.exists(self._up_path):
