@@ -14,10 +14,12 @@ async def main():
         update_aria2_options,
         update_variables,
     )
+    from .helper.telegram_helper.command_utils import set_bot_commands
 
     await load_settings()
 
     await gather(TgClient.start_bot(), TgClient.start_user())
+    await set_bot_commands(TgClient.bot)
     await gather(load_configurations(), update_variables())
 
     from .core.torrent_manager import TorrentManager
