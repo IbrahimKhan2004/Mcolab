@@ -36,6 +36,7 @@ async def create_thumb(msg, _id=""):
 
 async def get_media_info(path):
     try:
+        size = await aiopath.getsize(path)
         result = await cmd_exec(
             [
                 "ffprobe",
@@ -50,18 +51,18 @@ async def get_media_info(path):
         )
     except Exception as e:
         LOGGER.error(f"Get Media Info: {e}. Mostly File not found! - File: {path}")
-        return 0, None, None
+        return 0, None, None, 0
     if result[0] and result[2] == 0:
         fields = eval(result[0]).get("format")
         if fields is None:
             LOGGER.error(f"get_media_info: {result}")
-            return 0, None, None
+            return 0, None, None, 0
         duration = round(float(fields.get("duration", 0)))
         tags = fields.get("tags", {})
         artist = tags.get("artist") or tags.get("ARTIST") or tags.get("Artist")
         title = tags.get("title") or tags.get("TITLE") or tags.get("Title")
-        return duration, artist, title
-    return 0, None, None
+        return duration, artist, title, size
+    return 0, None, None, 0
 
 
 async def get_document_type(path):
