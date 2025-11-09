@@ -411,7 +411,7 @@ class TelegramUploader:
                 )
             elif is_video:
                 key = "videos"
-                duration = (await get_media_info(self._up_path))[0]
+                duration, _, _ , _= await get_media_info(self._up_path)
                 if thumb is None and self._listener.thumbnail_layout:
                     ss_thumb = await get_multiple_frames_thumbnail(
                         self._up_path,
@@ -437,7 +437,7 @@ class TelegramUploader:
                     video=self._up_path,
                     quote=True,
                     caption=cap_mono,
-                    duration=duration,
+                    duration=duration or 0,
                     width=width,
                     height=height,
                     thumb=thumb,
@@ -447,7 +447,7 @@ class TelegramUploader:
                 )
             elif is_audio:
                 key = "audios"
-                duration, artist, title = await get_media_info(self._up_path)
+                duration, artist, title, _ = await get_media_info(self._up_path)
                 if self._listener.is_cancelled:
                     return
                 if thumb == "none":
@@ -456,9 +456,9 @@ class TelegramUploader:
                     audio=self._up_path,
                     quote=True,
                     caption=cap_mono,
-                    duration=duration,
-                    performer=artist,
-                    title=title,
+                    duration=duration or 0,
+                    performer=artist or "Unknown",
+                    title=title or file,
                     thumb=thumb,
                     disable_notification=True,
                     progress=self._upload_progress,
