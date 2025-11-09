@@ -355,7 +355,22 @@ user_settings_text = {
 * id/@username|topic_id(leech in specific chat and topic) add | without space and write topic id after chat id or username. Timeout: 60 sec""",
     "USER_DUMP": "Send USER_DUMP ID/USERNAME/PM.", 
     "LEECH_FILENAME_PREFIX": r"Send Leech Filename Prefix. You can add HTML tags. Example: <code>@mychannel</code>. Timeout: 60 sec",
-    "LEECH_CAPTION": r"Send Leech Caption. You can add HTML tags. Example: <code>{filename}</code>. Timeout: 60 sec",
+    "LEECH_CAPTION": r"""Send Leech Caption. You can add HTML tags and variables.
+<b>Variables:</b>
+<code>{filename}</code> - Filename
+<code>{size}</code> - File Size
+<code>{duration}</code> - File Duration
+<code>{quality}</code> - Quality
+<code>{language}</code> - Languages
+<code>{subtitle}</code> - Subtitles
+<code>{episode}</code> - Episode Number
+<code>{season}</code> - Season Number
+
+<b>Example:</b>
+<code><b>{filename}</b>
+<b>Size:</b> {size}
+<b>Duration:</b> {duration}</code>
+Timeout: 60 sec""",
     "THUMBNAIL_LAYOUT": "Send thumbnail layout (widthxheight, 2x2, 3x3, 2x4, 4x4, ...). Example: 3x3. Timeout: 60 sec",
     "RCLONE_PATH": "Send Rclone Path. If you want to use your rclone config edit using owner/user config from usetting or add mrcc: before rclone path. Example mrcc:remote:folder. Timeout: 60 sec",
     "RCLONE_FLAGS": "key:value|key|key|key:value . Check here all <a href='https://rclone.org/flags/'>RcloneFlags</a>\nEx: --buffer-size:8M|--drive-starred-only",
