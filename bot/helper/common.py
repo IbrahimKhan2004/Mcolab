@@ -381,17 +381,24 @@ class TaskConfig:
                         uploader_id = self.client.me.id
                         if chat.type.name in ["SUPERGROUP", "CHANNEL", "GROUP"]:
                             member = await chat.get_member(uploader_id)
-                            if (
-                                not member.privileges.can_manage_chat
-                                or not member.privileges.can_delete_messages
-                            ):
+                            is_admin = False
+                            if member.privileges:
+                                if chat.type.name == "CHANNEL":
+                                    is_admin = member.privileges.can_post_messages
+                                elif (
+                                    member.privileges.can_manage_chat
+                                    and member.privileges.can_delete_messages
+                                ):
+                                    is_admin = True
+
+                            if not is_admin:
                                 if not self.user_transmission:
                                     raise ValueError(
                                         "You don't have enough privileges in this chat!"
                                     )
                                 else:
                                     self.hybrid_leech = False
-                        elif chat.type.name != "PRIVATE":
+                        else:
                             try:
                                 await self.client.send_chat_action(
                                     self.up_dest, ChatAction.TYPING
