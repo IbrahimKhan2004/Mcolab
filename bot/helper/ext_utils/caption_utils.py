@@ -19,11 +19,11 @@ async def format_caption(file_path, user_caption):
         caption = caption.replace('{size}', file_size)
         caption = caption.replace('{duration}', duration)
 
-        quality_match = re.search(r'(720p|1080p|2160p)', file_name)
+        quality_match = re.search(r'(480p|720p|1080p|2160p)', file_name, re.IGNORECASE)
         if quality_match:
             caption = caption.replace('{quality}', quality_match.group(1))
 
-        season_episode_match = re.search(r'S(\d{2})E(\d{2})', file_name)
+        season_episode_match = re.search(r'S(\d{2})\s?E(\d{2})', file_name, re.IGNORECASE)
         if season_episode_match:
             caption = caption.replace('{season}', season_episode_match.group(1))
             caption = caption.replace('{episode}', season_episode_match.group(2))
