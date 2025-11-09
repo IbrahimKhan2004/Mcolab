@@ -257,13 +257,18 @@ def loop_thread(func):
 
 async def extract_movie_info(caption):
     try:
-        regex = re.compile(r'(.+?)(\d{4})')
+        # Improved regex to find the title and year
+        regex = re.compile(r'(.+?)\s*(?:\(|\.)(\d{4})(?:\)|\.)', re.IGNORECASE)
         match = regex.search(caption)
 
         if match:
-            # Replace '.' and remove '(' and ')' from movie_name
-            movie_name = match.group(1).replace('.', ' ').replace('(', '').replace(')', '').strip()
+            # The title is everything before the year
+            movie_name = match.group(1).replace('.', ' ').strip()
             release_year = match.group(2)
+
+            # Additional cleaning for common patterns
+            movie_name = re.sub(r'\s*S\d+.*', '', movie_name, flags=re.IGNORECASE).strip()
+
             return movie_name, release_year
     except Exception as e:
         print(e)
