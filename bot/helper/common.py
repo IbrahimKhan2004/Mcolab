@@ -391,7 +391,7 @@ class TaskConfig:
                                     )
                                 else:
                                     self.hybrid_leech = False
-                        else:
+                        elif chat.type.name != "PRIVATE":
                             try:
                                 await self.client.send_chat_action(
                                     self.up_dest, ChatAction.TYPING
