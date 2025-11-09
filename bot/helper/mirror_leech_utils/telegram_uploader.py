@@ -240,7 +240,6 @@ class TelegramUploader:
         await self._user_settings()
         res = await self._msg_to_reply()
         if not res:
-            reply_to = self._sent_msg
             return
         for dirpath, _, files in natsorted(await sync_to_async(walk, self._path)):
             if dirpath.endswith("/yt-dlp-thumb"):
@@ -250,7 +249,6 @@ class TelegramUploader:
                 await rmtree(dirpath, ignore_errors=True)
                 continue
             for file_ in natsorted(files):
-                self._sent_msg = reply_to
                 self._error = ""
                 self._up_path = f_path = ospath.join(dirpath, file_)
                 if not await aiopath.exists(self._up_path):
@@ -402,9 +400,13 @@ class TelegramUploader:
                     return
                 if thumb == "none":
                     thumb = None
-                self._sent_msg = await self._sent_msg.reply_document(
+                if self._user_session:
+                    client = TgClient.user
+                else:
+                    client = self._listener.client
+                self._sent_msg = await client.send_document(
+                    chat_id=self._sent_msg.chat.id,
                     document=self._up_path,
-                    quote=True,
                     thumb=thumb,
                     caption=cap_mono,
                     force_document=True,
@@ -435,9 +437,13 @@ class TelegramUploader:
                     return
                 if thumb == "none":
                     thumb = None
-                self._sent_msg = await self._sent_msg.reply_video(
+                if self._user_session:
+                    client = TgClient.user
+                else:
+                    client = self._listener.client
+                self._sent_msg = await client.send_video(
+                    chat_id=self._sent_msg.chat.id,
                     video=self._up_path,
-                    quote=True,
                     caption=cap_mono,
                     duration=duration or 0,
                     width=width,
@@ -454,9 +460,13 @@ class TelegramUploader:
                     return
                 if thumb == "none":
                     thumb = None
-                self._sent_msg = await self._sent_msg.reply_audio(
+                if self._user_session:
+                    client = TgClient.user
+                else:
+                    client = self._listener.client
+                self._sent_msg = await client.send_audio(
+                    chat_id=self._sent_msg.chat.id,
                     audio=self._up_path,
-                    quote=True,
                     caption=cap_mono,
                     duration=duration or 0,
                     performer=artist or "Unknown",
@@ -469,9 +479,13 @@ class TelegramUploader:
                 key = "photos"
                 if self._listener.is_cancelled:
                     return
-                self._sent_msg = await self._sent_msg.reply_photo(
+                if self._user_session:
+                    client = TgClient.user
+                else:
+                    client = self._listener.client
+                self._sent_msg = await client.send_photo(
+                    chat_id=self._sent_msg.chat.id,
                     photo=self._up_path,
-                    quote=True,
                     caption=cap_mono,
                     disable_notification=True,
                     progress=self._upload_progress,
