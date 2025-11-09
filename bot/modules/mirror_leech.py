@@ -3,7 +3,8 @@ from aiofiles.os import path as aiopath
 from base64 import b64encode
 from re import match as re_match
 
-from .. import LOGGER, bot_loop, task_dict_lock, DOWNLOAD_DIR
+from .. import LOGGER, bot_loop, task_dict_lock, DOWNLOAD_DIR, user_data
+from ..core.config_manager import Config
 from ..helper.ext_utils.bot_utils import (
     get_content_type,
     sync_to_async,
@@ -139,6 +140,11 @@ class Mirror(TaskListener):
         self.folder_name = f"/{args['-m']}".rstrip("/") if len(args['-m']) > 0 else ""
         self.bot_trans = args["-bt"]
         self.user_trans = args["-ut"]
+
+        if self.is_leech and not self.up_dest:
+            user_id = self.message.from_user.id
+            user_dict = user_data.get(user_id, {})
+            self.up_dest = user_dict.get('LEECH_DUMP_CHAT') or Config.LEECH_DUMP_CHAT or 'pm'
 
         headers = args["-h"]
         is_bulk = args["-b"]
