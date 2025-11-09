@@ -159,8 +159,7 @@ class TelegramUploader:
             await rename(self._up_path, new_path)
             self._up_path = new_path
         else:
-            user_caption = self._listener.user_dict.get("LEECH_CAPTION") or Config.LEECH_CAPTION
-            cap_mono = await format_caption(self._up_path, user_caption) if user_caption else f"<code>{file_}</code>"
+            cap_mono = f"<code>{file_}</code>"
         if len(file_) > 60:
             if is_archive(file_):
                 name = get_base_name(file_)
@@ -241,6 +240,7 @@ class TelegramUploader:
         res = await self._msg_to_reply()
         if not res:
             return
+        reply_to = self._sent_msg
         for dirpath, _, files in natsorted(await sync_to_async(walk, self._path)):
             if dirpath.endswith("/yt-dlp-thumb"):
                 continue
@@ -249,6 +249,7 @@ class TelegramUploader:
                 await rmtree(dirpath, ignore_errors=True)
                 continue
             for file_ in natsorted(files):
+                self._sent_msg = reply_to
                 self._error = ""
                 self._up_path = f_path = ospath.join(dirpath, file_)
                 if not await aiopath.exists(self._up_path):
