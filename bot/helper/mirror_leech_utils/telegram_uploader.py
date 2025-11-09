@@ -32,6 +32,7 @@ from tenacity import (
 from ...core.config_manager import Config
 from ...core.mltb_client import TgClient
 from ..ext_utils.bot_utils import sync_to_async, extract_movie_info, get_movie_poster, humanbytes, download_image_url
+from ..ext_utils.caption_utils import format_caption
 from ..ext_utils.files_utils import is_archive, get_base_name
 from ..telegram_helper.message_utils import delete_message
 from ..ext_utils.media_utils import (
@@ -158,7 +159,8 @@ class TelegramUploader:
             await rename(self._up_path, new_path)
             self._up_path = new_path
         else:
-            cap_mono = f"<code>{file_}</code>"
+            user_caption = self._listener.user_dict.get("LEECH_CAPTION") or Config.LEECH_CAPTION
+            cap_mono = await format_caption(self._up_path, user_caption) if user_caption else f"<code>{file_}</code>"
         if len(file_) > 60:
             if is_archive(file_):
                 name = get_base_name(file_)
